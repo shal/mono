@@ -16,8 +16,7 @@ To create new API client:
 
 ```go
 // Replace this string with your token.
-c := revolut.New("My token")
-rates, _ := c.rates()
+c := mono.New("My token")
 ```
 
 ## Example
@@ -44,4 +43,4 @@ func main() {
 
 ## Contributions
 
-You can send me some tip to [mono](https://send.monobank.com.ua/2FVYpRHoi), if this package was useful.
+You can send me some tips to [MonoBank](https://send.monobank.com.ua/2FVYpRHoi), if this package was useful.
