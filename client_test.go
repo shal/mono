@@ -14,7 +14,9 @@ func TestClient_GetJSON(t *testing.T) {
 	server := httptest.NewServer(
 		http.HandlerFunc(
 			func(rw http.ResponseWriter, req *http.Request) {
-				rw.Write([]byte(expected))
+				if _, err := rw.Write([]byte(expected)); err != nil {
+					t.Fail()
+				}
 			},
 		),
 	)
