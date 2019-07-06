@@ -30,7 +30,9 @@ func TestClient_Statement(t *testing.T) {
 	server := httptest.NewServer(
 		http.HandlerFunc(
 			func(rw http.ResponseWriter, req *http.Request) {
-				json.NewEncoder(rw).Encode(expected)
+				if err := json.NewEncoder(rw).Encode(expected); err != nil {
+					t.Fail()
+				}
 			},
 		),
 	)
@@ -74,7 +76,9 @@ func TestClient_User(t *testing.T) {
 	server := httptest.NewServer(
 		http.HandlerFunc(
 			func(rw http.ResponseWriter, req *http.Request) {
-				json.NewEncoder(rw).Encode(expected)
+				if err := json.NewEncoder(rw).Encode(expected); err != nil {
+					t.Fail()
+				}
 			},
 		),
 	)
