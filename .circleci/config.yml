@@ -1,0 +1,57 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: circleci/golang:1.12
+        environment:
+          GO111MODULE: "on"
+    working_directory: /go/src/github.com/shal/mono
+    steps:
+      - checkout
+      - run:
+          name: Run tests
+          command: go test -v -bench=. -race ./...
+      - run:
+          name: Lint Code
+          environment:
+            GO111MODULE: "off"
+          command: |
+            go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+            GO111MODULE=on golangci-lint run
+
+  release:
+    docker:
+      - image: circleci/golang:1.12
+        environment:
+          GO111MODULE: "off"
+          USER_NAME: Ali Shanaakh
+          USER_EMAIL: github@shal.dev
+    steps:
+      - checkout
+      - run:
+          name: Set git configuration
+          command: |
+            git config --global user.name "${USER_NAME}"
+            git config --global user.email "${USER_EMAIL}"
+      - run:
+          name: Bump
+          command: |
+            go get github.com/Clever/gitsem
+            gitsem -m "[ci skip] Bump version to %s" patch
+      - run:
+          name: Release
+          command: |
+            git remote add authenticated-origin https://${GITHUB_USER}:${GITHUB_API_KEY}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+            git push --tags authenticated-origin HEAD:${CIRCLE_BRANCH}
+workflows:
+  version: 2
+  test-relase-build:
+    jobs:
+      - test
+      - release:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
