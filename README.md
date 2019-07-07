@@ -1,10 +1,10 @@
-# Monobank API Client
+# MonoBank SDK
 
-:bank: Golang client for [Monobank API](https://api.monobank.ua/docs/).
+:bank: Golang client for [Mono API](https://api.monobank.ua/docs/).
 
 ## Install
 
-This package has no dependencies, so just install it using command below
+This package has no dependencies, install it with command below
 
 ```sh
 go get github.com/shal/mono
@@ -19,9 +19,13 @@ To create new API client:
 c := mono.New("My token")
 ```
 
+TODO: Add usage of each API endpoint.
+
 ## Example
 
 ```go
+package main
+
 import "fmt"
 
 import "github.com/shal/mono"

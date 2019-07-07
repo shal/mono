@@ -8,7 +8,7 @@ import (
 )
 
 func TestClient_Rates(t *testing.T) {
-	cli := New("fake_token")
+	cli := New(NewPersonalAuth("fake_token"))
 
 	expected := []Exchange{
 		{

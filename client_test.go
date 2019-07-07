@@ -7,7 +7,7 @@ import (
 )
 
 func TestClient_GetJSON(t *testing.T) {
-	cli := New("fake_token")
+	cli := New(NewPersonalAuth("fake_token"))
 
 	// Mock fake server.
 	expected := "This is fake response from the fake API"

@@ -9,7 +9,7 @@ import (
 )
 
 func TestClient_Statement(t *testing.T) {
-	cli := New("fake_token")
+	cli := New(NewPersonalAuth("fake_token"))
 
 	expected := []StatementItem{
 		{
@@ -57,7 +57,7 @@ func TestClient_Statement(t *testing.T) {
 }
 
 func TestClient_User(t *testing.T) {
-	cli := New("fake_token")
+	cli := New(NewPersonalAuth("fake_token"))
 
 	expected := UserInfo{
 		Name:       "John Doe",
