@@ -17,7 +17,7 @@ var BaseURL = DefaultBaseURL
 // Client is the core structure for Monobank API access.
 type Client struct {
 	http.Client
-	token string
+	auth Authorizer
 }
 
 func (c *Client) buildURL(endpoint string) (string, error) {
@@ -31,9 +31,9 @@ func (c *Client) buildURL(endpoint string) (string, error) {
 }
 
 // New creates a new Monobank client with some reasonable HTTP request defaults.
-func New(token string) *Client {
+func New(auth Authorizer) *Client {
 	return &Client{
-		token: token,
+		auth: auth,
 		Client: http.Client{
 			Timeout: time.Second * 5,
 			Transport: &http.Transport{
@@ -56,7 +56,7 @@ func (c *Client) GetJSON(endpoint string) ([]byte, int, error) {
 		return nil, 0, err
 	}
 
-	req.Header.Set("X-Token", c.token)
+	c.auth.Auth(req)
 
 	resp, err := c.Do(req)
 	if err != nil {
