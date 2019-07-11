@@ -3,6 +3,7 @@ package mono
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"time"
 )
 
@@ -14,7 +15,7 @@ func (c *Client) User() (*UserInfo, error) {
 		return nil, err
 	}
 
-	if status != 200 {
+	if status != http.StatusOK {
 		return nil, fmt.Errorf("invalid status %d", status)
 	}
 
@@ -35,7 +36,7 @@ func (c *Client) Statement(account string, from, to time.Time) ([]StatementItem,
 		return nil, err
 	}
 
-	if status != 200 {
+	if status != http.StatusOK {
 		return nil, fmt.Errorf("invalid status %d", status)
 	}
 

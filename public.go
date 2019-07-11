@@ -2,7 +2,8 @@ package mono
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
+	"net/http"
 )
 
 // Rates returns list of currencies rates from Monobank API.
@@ -13,8 +14,12 @@ func (c *Client) Rates() ([]Exchange, error) {
 		return nil, err
 	}
 
-	if status != 200 {
-		return nil, fmt.Errorf("invalid status %d", status)
+	if status != http.StatusOK {
+		var msg Error
+		if err := json.Unmarshal(contents, &msg); err != nil {
+			return nil, errors.New("invalid error payload")
+		}
+		return nil, msg
 	}
 
 	var data []Exchange
