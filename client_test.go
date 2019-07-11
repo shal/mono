@@ -25,7 +25,7 @@ func TestClient_GetJSON(t *testing.T) {
 	// Get request to the fake server to validate, that method works properly.
 	BaseURL = server.URL
 	body, status, err := cli.GetJSON("/fake")
-	if err != nil || status != 200 || string(body) != expected {
+	if err != nil || status != http.StatusOK || string(body) != expected {
 		t.Fail()
 	}
 	BaseURL = DefaultBaseURL

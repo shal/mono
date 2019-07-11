@@ -89,12 +89,12 @@ func CurrencyFromISO4217(code int32) (Currency, error) {
 // Exchange contains market buy/sell rates.
 // See https://api.monobank.ua/docs/#/definitions/CurrencyInfo for details.
 type Exchange struct {
-	CodeA      int32   `json:"CurrencyCodeA"`
-	CodeB      int32   `json:"CurrencyCodeB"`
-	Date       int32   `json:"Date"`
-	RateSell   float64 `json:"RateSell"`
-	RateBuy    float64 `json:"RateBuy"`
-	RateCross  float64 `json:"RateCross"`
+	CodeA     int32   `json:"CurrencyCodeA"`
+	CodeB     int32   `json:"CurrencyCodeB"`
+	Date      int32   `json:"Date"`
+	RateSell  float64 `json:"RateSell"`
+	RateBuy   float64 `json:"RateBuy"`
+	RateCross float64 `json:"RateCross"`
 }
 
 // Base returns normal representation of CurrencyCodeA.
