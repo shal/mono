@@ -2,6 +2,8 @@
 
 :bank: Golang client for [Mono API](https://api.monobank.ua/docs/).
 
+![Logo](./assets/logo.png)
+
 ## Install
 
 This package has no dependencies, install it with command below
