@@ -52,8 +52,6 @@ func TestClient_Statement(t *testing.T) {
 			t.Errorf("%v and %v is not equal", item, expected)
 		}
 	}
-
-	BaseURL = DefaultBaseURL
 }
 
 func TestClient_User(t *testing.T) {
@@ -93,6 +91,34 @@ func TestClient_User(t *testing.T) {
 	if user == &expected {
 		t.Errorf("%v and %v is not equal", *user, expected)
 	}
+}
 
-	BaseURL = DefaultBaseURL
+func TestClient_SetWebHook(t *testing.T) {
+	cli := New(NewPersonalAuth("fake_token"))
+
+	server := httptest.NewServer(
+		http.HandlerFunc(
+			func(rw http.ResponseWriter, req *http.Request) {
+				if _, err := rw.Write([]byte(`{ "status": "ok" }`)); err != nil {
+					t.Fail()
+				}
+			},
+		),
+	)
+	defer server.Close()
+	BaseURL = server.URL
+
+	body, err := cli.SetWebHook("http://127.0.0.1:8080")
+	if err != nil {
+		t.Errorf("Error: %s", err.Error())
+	}
+
+	var payload map[string]string
+	if err := json.Unmarshal(body, &payload); err != nil {
+		t.Errorf("Error: %s", err.Error())
+	}
+
+	if payload["status"] != "ok" {
+		t.Errorf("%v and ok is not equal", payload["status"])
+	}
 }

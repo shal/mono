@@ -1,6 +1,7 @@
 package mono
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -46,4 +47,23 @@ func (c *Client) Statement(account string, from, to time.Time) ([]StatementItem,
 	}
 
 	return data, nil
+}
+
+// SetWebHook sets WebHook URL for authorized user.
+func (c *Client) SetWebHook(url string) ([]byte, error) {
+	buff, err := json.Marshal(struct{ WebHookUrl string }{url})
+	if err != nil {
+		return nil, err
+	}
+
+	contents, status, err := c.PostJSON("/personal/webhook", bytes.NewReader(buff))
+	if err != nil {
+		return nil, err
+	}
+
+	if status != http.StatusOK {
+		return nil, fmt.Errorf("invalid status %d", status)
+	}
+
+	return contents, nil
 }
