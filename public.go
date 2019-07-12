@@ -7,7 +7,7 @@ import (
 )
 
 // Rates returns list of currencies rates from Monobank API.
-// See https://api.monobank.ua/docs/#/definitions/FCurrencyInfo for details.
+// See https://api.monobank.ua/docs/#/definitions/CurrencyInfo for details.
 func (c *Client) Rates() ([]Exchange, error) {
 	contents, status, err := c.GetJSON("/bank/currency")
 	if err != nil {

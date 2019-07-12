@@ -1,8 +1,19 @@
 # MonoBank SDK
 
-:bank: Golang client for [Mono API](https://api.monobank.ua/docs/).
+[godoc]: https://godoc.org/github.com/shal/mono
+[godoc-img]: https://godoc.org/github.com/shal/mono?status.svg
 
-![Logo](./assets/logo.png)
+[ci]: https://circleci.com/gh/shal/mono
+[ci-img]: https://circleci.com/gh/shal/mono.svg?style=svg
+
+[goreport]: https://goreportcard.com/report/github.com/shal/mono
+[goreport-img]: https://goreportcard.com/badge/github.com/shal/mono
+
+[![Circle CI][ci-img]][ci]
+[![Docs][godoc-img]][godoc]
+[![Go Report][goreport-img]][goreport]
+
+:bank: Golang client for [Mono API](https://api.monobank.ua/docs/).
 
 ## Install
 
@@ -18,7 +29,7 @@ To create new API client:
 
 ```go
 // Replace this string with your token.
-c := mono.New("My token")
+client := mono.New("My token")
 ```
 
 TODO: Add usage of each API endpoint.
