@@ -1,6 +1,7 @@
 package mono
 
 import (
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -52,6 +53,30 @@ func (c *Client) GetJSON(endpoint string) ([]byte, int, error) {
 	}
 
 	req, err := http.NewRequest("GET", uri, nil)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	c.auth.Auth(req)
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	return body, resp.StatusCode, err
+}
+
+// PostJSON builds the full endpoint path and gets the raw JSON.
+func (c *Client) PostJSON(endpoint string, payload io.Reader) ([]byte, int, error) {
+	uri, err := c.buildURL(endpoint)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	req, err := http.NewRequest("POST", uri, payload)
 	if err != nil {
 		return nil, 0, err
 	}
