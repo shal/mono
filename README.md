@@ -29,7 +29,8 @@ To create new API client:
 
 ```go
 // Replace this string with your token.
-client := mono.New("My token")
+auth := mono.NewPersonalAuth("My token")
+client := mono.New(auth)
 ```
 
 TODO: Add usage of each API endpoint.
@@ -46,7 +47,9 @@ import "github.com/shal/mono"
 func main() {
     token := "My token"
 
-    client := mono.New(token)
+    auth := mono.NewPersonalAuth("My token")
+    client := mono.New(auth)
+
     rates, err := client.Rates()
     if err != nil {
         panic(err)
