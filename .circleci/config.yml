@@ -39,6 +39,7 @@ jobs:
           command: |
             go get github.com/Clever/gitsem
             gitsem -m "[ci skip] Bump version to %s" patch
+            echo "package mono\n\nconst (\n    Version = \"`cat VERSION`\"\n)" > version.go
       - run:
           name: Release
           command: |
