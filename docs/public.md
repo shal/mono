@@ -3,7 +3,7 @@
 Create new public API client.
 
 ```go
-public := NewPublic()
+public := mono.NewPublic()
 ```
 
 Get currency rates.
@@ -15,12 +15,15 @@ if err != nil {
     os.Exit(1)
 }
 
-
 for _, rate := range rates {
-    ccyA := mono.CurrencyFromISO4217(rate.codeA)
-    ccyB := mono.CurrencyFromISO4217(rate.codeB)
+    ccyA, _ := mono.CurrencyFromISO4217(rate.CodeA)
+    ccyB, _ := mono.CurrencyFromISO4217(rate.CodeB)
 
-    fmt.Printf("%s/%s - %d", ccyA.Name, ccyB.Name, rate.RateSell)
+    if rate.RateBuy != 0 {
+        fmt.Printf("%s/%s - %f\n", ccyA.Name, ccyB.Name, rate.RateBuy)
+    } else {
+        fmt.Printf("%s/%s - %f\n", ccyA.Name, ccyB.Name, rate.RateCross)
+    }
 }
 ```
 

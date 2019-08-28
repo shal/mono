@@ -1,16 +1,16 @@
-# Personal API
+# Corporate API
 
-Create new personal API client.
+Create new corporate API client.
 
 ```go
-// For more information about token: https://api.monobank.ua/.
-personal := mono.NewPersonal("token")
+// For more information about corporate API: https://api.monobank.ua/docs/corporate.html.
+corporate := mono.NewCorporate(...)
 ```
 
 As far as public endpoints are also available, you can get currency rates.
 
 ```go
-rates, err := personal.Rates()
+rates, err := corporate.Rates()
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)
@@ -28,10 +28,11 @@ for _, rate := range rates {
 }
 ```
 
-Information about current user.
+Information about authorized user by request ID.
 
 ```go
-user, err := personal.User()
+requestID := "xxx"
+user, err := corporate.User(requestID)
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)
@@ -50,7 +51,8 @@ for _, acc := range user.Accounts {
 User's transaction for a given period of time.
 
 ```go
-user, err := personal.User()
+requestID := "xxx"
+user, err := corporate.User(requestID)
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)
@@ -68,7 +70,7 @@ for _, acc := range user.Accounts {
     }
 }
 
-transactions, err := personal.Transactions(account.ID, from, to)
+transactions, err := corporate.Transactions(requestID, account.ID, from, to)
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)
@@ -82,19 +84,7 @@ for _, transaction := range transactions {
 }
 ```
 
-Set WebHook for give URI.
-
-```go
-_, err := personal.SetWebHook("http://example.com")
-if err != nil {
-    fmt.Println(err.Error())
-    os.Exit(1)
-} else {
-    fmt.Println("Success!")
-}
-```
-
 You can create custom requests:
 
-* **POST** request using `personal.PostJSON(...)` method.
-* **GET** request using `personal.GetJSON(...)` method.
+* **POST** request using `corporate.PostJSON(...)` method.
+* **GET** request using `corporate.GetJSON(...)` method.

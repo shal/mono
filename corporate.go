@@ -6,13 +6,13 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-
-	"errors"
 )
 
 const (
@@ -43,8 +43,8 @@ func (auth *CorporateAuth) Auth(r *http.Request) error {
 
 // Corporate get's access to corporate methods.
 type Corporate struct {
-	authCore
-	CorporateAuth
+	authCore authCore
+	auth     CorporateAuth
 }
 
 // NewCorporate returns new client of MonoBank Corporate API.
@@ -73,7 +73,6 @@ func NewCorporateAuth(
 	}, nil
 }
 
-// TODO: Avoid double usage of CorporateAuth.
 func NewCorporate(keyData []byte) (*Corporate, error) {
 	auth, err := NewCorporateAuth(keyData)
 	if err != nil {
@@ -81,8 +80,8 @@ func NewCorporate(keyData []byte) (*Corporate, error) {
 	}
 
 	return &Corporate{
-		CorporateAuth: *auth,
-		authCore:      *newAuthCore(auth),
+		auth:     *auth,
+		authCore: *newAuthCore(auth),
 	}, nil
 }
 
@@ -92,7 +91,7 @@ func (c *Corporate) Auth(callback string, permissions ...byte) (*TokenRequest, e
 	pp := string(permissions)
 	endpoint := "/personal/auth/request"
 
-	sign, err := c.SignStrings(timestamp, pp, endpoint)
+	sign, err := c.auth.SignStrings(timestamp, pp, endpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +102,7 @@ func (c *Corporate) Auth(callback string, permissions ...byte) (*TokenRequest, e
 		"X-Callback":    callback,
 	}
 
-	body, status, err := c.PostJSON(endpoint, headers, nil)
+	body, status, err := c.authCore.PostJSON(endpoint, headers, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +129,7 @@ func (c *Corporate) CheckAuth(reqID string) (bool, error) {
 	timestamp := strconv.Itoa(int(time.Now().Unix()))
 	endpoint := "/personal/auth/request"
 
-	sign, err := c.SignStrings(timestamp, reqID, endpoint)
+	sign, err := c.auth.SignStrings(timestamp, reqID, endpoint)
 	if err != nil {
 		return false, err
 	}
@@ -140,7 +139,7 @@ func (c *Corporate) CheckAuth(reqID string) (bool, error) {
 		"X-Request-Id": reqID,
 	}
 
-	body, status, err := c.GetJSON(endpoint, headers)
+	body, status, err := c.authCore.GetJSON(endpoint, headers)
 	if err != nil {
 		return false, err
 	}
@@ -162,7 +161,7 @@ func (c *Corporate) User(reqID string) (*UserInfo, error) {
 	timestamp := strconv.Itoa(int(time.Now().Unix()))
 	endpoint := "/personal/client-info"
 
-	sign, err := c.SignStrings(timestamp, reqID, endpoint)
+	sign, err := c.auth.SignStrings(timestamp, reqID, endpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +181,7 @@ func (c *Corporate) Transactions(reqID string, account string, from, to time.Tim
 	fmt.Println()
 	path := fmt.Sprintf("/personal/statement/%s/%d/%d", account, from.Unix(), to.Unix())
 
-	sign, err := c.SignStrings(timestamp, reqID, path)
+	sign, err := c.auth.SignStrings(timestamp, reqID, path)
 	if err != nil {
 		return nil, err
 	}
@@ -193,4 +192,24 @@ func (c *Corporate) Transactions(reqID string, account string, from, to time.Tim
 	}
 
 	return c.authCore.Transactions(account, from, to, headers)
+}
+
+// Rates returns list of currencies rates from MonoBank API.
+// See https://api.monobank.ua/docs/#/definitions/CurrencyInfo for details.
+func (c *Corporate) Rates() ([]Exchange, error) {
+	return c.authCore.Rates()
+}
+
+// GetJSON builds the full endpoint path and gets the raw JSON.
+func (c *Corporate) GetJSON(endpoint string, headers map[string]string) ([]byte, int, error) {
+	return c.authCore.GetJSON(endpoint, headers)
+}
+
+// PostJSON builds the full endpoint path and gets the raw JSON.
+func (c *Corporate) PostJSON(
+	endpoint string,
+	headers map[string]string,
+	payload io.Reader,
+) ([]byte, int, error) {
+	return c.authCore.PostJSON(endpoint, headers, payload)
 }

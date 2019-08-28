@@ -27,7 +27,7 @@ type Account struct {
 	ID           string       `json:"id"`           // Account identifier.
 	Balance      int          `json:"balance"`      // Balance is minimal units (cents).
 	CreditLimit  int          `json:"creditLimit"`  // Credit limit.
-	CurrencyCode int          `json:"currencyCode"` // Currency code in ISO4217.
+	CurrencyCode int32        `json:"currencyCode"` // Currency code in ISO4217.
 	CashBackType CashBackType `json:"cashbackType"` // Type of cash-back.
 }
 

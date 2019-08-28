@@ -9,9 +9,12 @@
 [goreport]: https://goreportcard.com/report/github.com/shal/mono
 [goreport-img]: https://goreportcard.com/badge/github.com/shal/mono
 
+[version]: https://img.shields.io/github/v/tag/shal/mono?sort=semver
+
 [![Circle CI][ci-img]][ci]
 [![Docs][godoc-img]][godoc]
 [![Go Report][goreport-img]][goreport]
+[![Version][version]][version]
 
 :bank: Golang client for [Mono API](https://api.monobank.ua/docs/).
 
@@ -23,40 +26,61 @@ This package has no dependencies, install it with command below
 go get github.com/shal/mono
 ```
 
-## Use
+## Usage
 
-To create new API client:
+You can find documentation for all types of API [here](./docs).
 
-```go
-// Replace this string with your token.
-auth := mono.NewPersonalAuth("My token")
-client := mono.New(auth)
-```
+Documentation
 
-TODO: Add usage of each API endpoint.
+* [Public API](./docs/public.md)
+* [Personal API](./docs/personal.md)
+* [Coraporate API](./docs/corporate.md)
 
 ## Example
 
 ```go
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "os"
+    "time"
 
-import "github.com/shal/mono"
+    "github.com/shal/mono"
+)
 
 func main() {
-    token := "My token"
+    personal := mono.NewPersonal("um3wHAOtcNsh-RQEogDK0nhcoIMF_kyxi7ZLdTYqrwpU")
 
-    auth := mono.NewPersonalAuth("My token")
-    client := mono.New(auth)
-
-    rates, err := client.Rates()
+    user, err := personal.User()
     if err != nil {
-        panic(err)
+        fmt.Println(err.Error())
+        os.Exit(1)
     }
 
-    for _, rate := range rates {
-        fmt.Println(rate)
+    from := time.Now().Add(-730 * time.Hour)
+    to := time.Now()
+
+    var account mono.Account
+
+    for _, acc := range user.Accounts {
+        ccy, _ := mono.CurrencyFromISO4217(acc.CurrencyCode)
+        if ccy.Code == "UAH" {
+            account = acc
+        }
+    }
+
+    transactions, err := personal.Transactions(account.ID, from, to)
+    if err != nil {
+        fmt.Println(err.Error())
+        os.Exit(1)
+    }
+
+    fmt.Printf("Account: %s\n", account.ID)
+
+    fmt.Println("Transactions:")
+    for _, transaction := range transactions {
+        fmt.Printf("%d\t%s\n", transaction.Amount, transaction.Description)
     }
 }
 ```
@@ -64,3 +88,7 @@ func main() {
 ## Contributions
 
 You can send me some tips to [MonoBank](https://send.monobank.com.ua/2FVYpRHoi), if this package was useful.
+
+## License
+
+Project released under the terms of the MIT [license](./LICENSE).
