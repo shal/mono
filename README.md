@@ -32,11 +32,11 @@ You can find documentation for all types of API [here](./docs).
 
 Documentation
 
-* [Public API](./docs/public.md)
-* [Personal API](./docs/personal.md)
-* [Coraporate API](./docs/corporate.md)
+1. [Public API](./docs/public.md)
+2. [Personal API](./docs/personal.md)
+3. [Coraporate API](./docs/corporate.md)
 
-## Example
+##
 
 ```go
 package main
@@ -50,7 +50,7 @@ import (
 )
 
 func main() {
-    personal := mono.NewPersonal("um3wHAOtcNsh-RQEogDK0nhcoIMF_kyxi7ZLdTYqrwpU")
+    personal := mono.NewPersonal("token ")
 
     user, err := personal.User()
     if err != nil {
@@ -84,6 +84,10 @@ func main() {
     }
 }
 ```
+
+More about this example [here](./examples/personal/main.go).
+
+![Example](./examples/personal/report.png)
 
 ## Contributions
 
