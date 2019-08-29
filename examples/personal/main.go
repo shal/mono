@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	personal := mono.NewPersonal("um3wHAOtcNsh-RQEogDK0nhcoIMF_kyxi7ZLdTYqrwpU")
+	personal := mono.NewPersonal("token")
 
 	user, err := personal.User()
 	if err != nil {
