@@ -5,7 +5,7 @@ This package support 3 types of authentication:
 
 	* Public API provides access to public endpoints with rate limitations.
 	* Personal API provides access by token to your own monobank account.
-	* Corporate API provides access for enterprice partners of Monobank.
+	* Corporate API provides access for enterprise partners of Monobank.
 
 The name mono stands for "MonoBank". It is short and clear.
 */

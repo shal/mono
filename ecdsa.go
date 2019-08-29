@@ -44,19 +44,21 @@ type ecPrivateKey struct {
 	PublicKey     asn1.BitString        `asn1:"optional,explicit,tag:1"`
 }
 
-// Add comment to exported SignTool type.
+// SignTool it utility, which helps to sign message.
 type SignTool struct {
 	B2A func([]byte) string
 	A2B func(string) ([]byte, error)
 }
 
-func NewDefaultSignTool() *SignTool {
+// DefaultSignTool returns new instance of SignTool SignTool with default encoding parameters.
+func DefaultSignTool() *SignTool {
 	return &SignTool{
 		B2A: base64.StdEncoding.EncodeToString,
 		A2B: base64.StdEncoding.DecodeString,
 	}
 }
 
+// DecodePrivateKey decodes privage key into Elliptic Curve Digital Signature Algorithm private key.
 func (t *SignTool) DecodePrivateKey(b []byte) (*ecdsa.PrivateKey, error) {
 	var privateKeyPemBlock *pem.Block
 
@@ -78,6 +80,7 @@ func (t *SignTool) DecodePrivateKey(b []byte) (*ecdsa.PrivateKey, error) {
 	return nil, fmt.Errorf("failed to find private key block")
 }
 
+// Sign signs string with specified private key.
 func (t *SignTool) Sign(key *ecdsa.PrivateKey, str string) (string, error) {
 	hash := sha256.Sum256([]byte(str))
 
@@ -98,14 +101,14 @@ func (t *SignTool) Sign(key *ecdsa.PrivateKey, str string) (string, error) {
 	return ret, nil
 }
 
-// Verify a digital signature. Returns nil if all is well or an error indicating
+// VerifyBytes verifies a digital signature. Returns nil if all is well or an error indicating
 // what went wrong.  The equivalent command at the command line is:
 // echo -n 'Make America Great Again!' | openssl dgst -verify pub1.pem -signature signature.dat
 func (t *SignTool) VerifyBytes(pubkey *ecdsa.PublicKey, b []byte, s string) error {
 	return t.VerifyBytesN([]*ecdsa.PublicKey{pubkey}, b, s)
 }
 
-// Do a verify with multiple public keys possibly matching
+// VerifyBytesN verifies with multiple public keys possibly matching.
 func (t *SignTool) VerifyBytesN(pubkeys []*ecdsa.PublicKey, b []byte, s string) error {
 
 	if len(pubkeys) == 0 {
@@ -149,6 +152,7 @@ func namedCurveFromOID(oid asn1.ObjectIdentifier) elliptic.Curve {
 	return nil
 }
 
+// ParseCustomECPrivateKey returns Elliptic Curve Digital Signature Algorithm private key from file content.
 func ParseCustomECPrivateKey(der []byte) (key *ecdsa.PrivateKey, err error) {
 	var privKey ecPrivateKey
 	if _, err := asn1.Unmarshal(der, &privKey); err != nil {
@@ -198,6 +202,8 @@ type CurveParams struct {
 	elliptic.CurveParams
 }
 
+// IsOnCurve returns boolean if the point (x,y) is on the curve.
+// Part of the elliptic.Curve interface.
 func (curve *CurveParams) IsOnCurve(x, y *big.Int) bool {
 	// y² = x³ + b
 	y2 := new(big.Int).Mul(y, y)
@@ -340,6 +346,8 @@ func (curve *CurveParams) doubleJacobian(x, y, z *big.Int) (*big.Int, *big.Int, 
 	return x3, y3, z3
 }
 
+// ScalarMult returns k*(Bx, By) where k is a big endian integer.
+// Part of the elliptic.Curve interface.
 func (curve *CurveParams) ScalarMult(Bx, By *big.Int, k []byte) (*big.Int, *big.Int) {
 	Bz := new(big.Int).SetInt64(1)
 	x, y, z := new(big.Int), new(big.Int), new(big.Int)
@@ -357,6 +365,9 @@ func (curve *CurveParams) ScalarMult(Bx, By *big.Int, k []byte) (*big.Int, *big.
 	return curve.affineFromJacobian(x, y, z)
 }
 
+// ScalarBaseMult returns k*G where G is the base point of the group and k is a
+// big endian integer.
+// Part of the elliptic.Curve interface.
 func (curve *CurveParams) ScalarBaseMult(k []byte) (*big.Int, *big.Int) {
 	return curve.ScalarMult(curve.Gx, curve.Gy, k)
 }

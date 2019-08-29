@@ -14,14 +14,16 @@ func (auth *personalAuth) Auth(request *http.Request) error {
 	return nil
 }
 
-func newPersonalAuth(token string) Authority {
+func newPersonalAuth(token string) Authorizer {
 	return &personalAuth{token}
 }
 
+// Personal gives access to personal methods.
 type Personal struct {
 	authCore
 }
 
+// NewPersonal returns new client of MonoBank Personal API.
 func NewPersonal(token string) *Personal {
 	return &Personal{
 		authCore: *newAuthCore(newPersonalAuth(token)),

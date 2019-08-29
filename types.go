@@ -4,12 +4,15 @@ package mono
 type CashBackType string
 
 const (
-	None  = "None"  // None is cash-back type for foreign currencies accounts.
-	UAH   = "UAH"   // UAH is default cash-back type for almost all accounts.
-	Miles = "Miles" // Miles available only on Iron Card.
+	// None is cash-back type for foreign currencies accounts.
+	None = "None"
+	// UAH is default cash-back type for almost all accounts.
+	UAH = "UAH"
+	// Miles available only on Iron Card.
+	Miles = "Miles"
 )
 
-// Overview of user and related accounts.
+// UserInfo is an overview of user and related accounts.
 type UserInfo struct {
 	Name       string    `json:"name"`       // User name.
 	WebHookURL string    `json:"webHookUrl"` // URL for receiving new transactions.

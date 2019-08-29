@@ -11,16 +11,17 @@ import (
 	"time"
 )
 
-type Authority interface {
+// Authorizer is an interface for different types of MonoBank API authorization.
+type Authorizer interface {
 	Auth(request *http.Request) error
 }
 
 type authCore struct {
 	core
-	auth Authority
+	auth Authorizer
 }
 
-func newAuthCore(auth Authority) *authCore {
+func newAuthCore(auth Authorizer) *authCore {
 	return &authCore{
 		auth: auth,
 		core: *newCore(),

@@ -16,23 +16,23 @@ import (
 )
 
 const (
-	// Statement permission provides access to balance and statement itself.
+	// StatementPermission provides access to balance and statement itself.
 	StatementPermission byte = 's'
-	// Personal permission provides access to client's name and surname.
+	// PersonalPermission provides access to client's name and surname.
 	PersonalPermission byte = 'p'
 )
 
-type CorporateAuth struct {
+type corporateAuth struct {
 	*SignTool
 	PrivateKey *ecdsa.PrivateKey
 	KeyID      string
 }
 
-func (auth *CorporateAuth) SignStrings(params ...string) (string, error) {
+func (auth *corporateAuth) signStrings(params ...string) (string, error) {
 	return auth.Sign(auth.PrivateKey, strings.Join(params, ""))
 }
 
-func (auth *CorporateAuth) Auth(r *http.Request) error {
+func (auth *corporateAuth) Auth(r *http.Request) error {
 	timestamp := strconv.Itoa(int(time.Now().Unix()))
 
 	r.Header.Set("X-Key-Id", auth.KeyID)
@@ -41,17 +41,16 @@ func (auth *CorporateAuth) Auth(r *http.Request) error {
 	return nil
 }
 
-// Corporate get's access to corporate methods.
+// Corporate gives access to corporate methods.
 type Corporate struct {
 	authCore authCore
-	auth     CorporateAuth
+	auth     corporateAuth
 }
 
-// NewCorporate returns new client of MonoBank Corporate API.
-func NewCorporateAuth(
+func newCorporateAuth(
 	keyData []byte,
-) (*CorporateAuth, error) {
-	sign := NewDefaultSignTool()
+) (*corporateAuth, error) {
+	sign := DefaultSignTool()
 
 	privateKey, err := sign.DecodePrivateKey(keyData)
 	if err != nil {
@@ -66,15 +65,16 @@ func NewCorporateAuth(
 	}
 	keyID := hex.EncodeToString(hash.Sum(nil))
 
-	return &CorporateAuth{
+	return &corporateAuth{
 		SignTool:   sign,
 		PrivateKey: privateKey,
 		KeyID:      keyID,
 	}, nil
 }
 
+// NewCorporate returns new client of MonoBank Corporate API.
 func NewCorporate(keyData []byte) (*Corporate, error) {
-	auth, err := NewCorporateAuth(keyData)
+	auth, err := newCorporateAuth(keyData)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func (c *Corporate) Auth(callback string, permissions ...byte) (*TokenRequest, e
 	pp := string(permissions)
 	endpoint := "/personal/auth/request"
 
-	sign, err := c.auth.SignStrings(timestamp, pp, endpoint)
+	sign, err := c.auth.signStrings(timestamp, pp, endpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -123,13 +123,12 @@ func (c *Corporate) Auth(callback string, permissions ...byte) (*TokenRequest, e
 	return tokenRequest, nil
 }
 
-// Перевірка статусу запиту на доступ к клієнтським данним
-// Check status of auth request.
+// CheckAuth checks status of request for client's personal data.
 func (c *Corporate) CheckAuth(reqID string) (bool, error) {
 	timestamp := strconv.Itoa(int(time.Now().Unix()))
 	endpoint := "/personal/auth/request"
 
-	sign, err := c.auth.SignStrings(timestamp, reqID, endpoint)
+	sign, err := c.auth.signStrings(timestamp, reqID, endpoint)
 	if err != nil {
 		return false, err
 	}
@@ -161,7 +160,7 @@ func (c *Corporate) User(reqID string) (*UserInfo, error) {
 	timestamp := strconv.Itoa(int(time.Now().Unix()))
 	endpoint := "/personal/client-info"
 
-	sign, err := c.auth.SignStrings(timestamp, reqID, endpoint)
+	sign, err := c.auth.signStrings(timestamp, reqID, endpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +180,7 @@ func (c *Corporate) Transactions(reqID string, account string, from, to time.Tim
 	fmt.Println()
 	path := fmt.Sprintf("/personal/statement/%s/%d/%d", account, from.Unix(), to.Unix())
 
-	sign, err := c.auth.SignStrings(timestamp, reqID, path)
+	sign, err := c.auth.signStrings(timestamp, reqID, path)
 	if err != nil {
 		return nil, err
 	}
@@ -206,10 +205,6 @@ func (c *Corporate) GetJSON(endpoint string, headers map[string]string) ([]byte,
 }
 
 // PostJSON builds the full endpoint path and gets the raw JSON.
-func (c *Corporate) PostJSON(
-	endpoint string,
-	headers map[string]string,
-	payload io.Reader,
-) ([]byte, int, error) {
+func (c *Corporate) PostJSON(endpoint string, headers map[string]string, payload io.Reader) ([]byte, int, error) {
 	return c.authCore.PostJSON(endpoint, headers, payload)
 }

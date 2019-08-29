@@ -7,9 +7,9 @@ import (
 	"testing"
 )
 
-type FakeAuthority struct{}
+type FakeAuthorizer struct{}
 
-func (fake FakeAuthority) Auth(request *http.Request) error {
+func (fake FakeAuthorizer) Auth(request *http.Request) error {
 	request.Header.Set("X-Auth-Test", "Success")
 	return nil
 }
@@ -19,7 +19,7 @@ func fix() {
 }
 
 func TestAuthCore_GetJSON(t *testing.T) {
-	core := newAuthCore(FakeAuthority{})
+	core := newAuthCore(FakeAuthorizer{})
 
 	srv, rr := FakeServer("Body", http.StatusOK)
 	BaseURL = srv.URL
@@ -62,7 +62,7 @@ func TestAuthCore_GetJSON(t *testing.T) {
 }
 
 func TestAuthCore_PostJSON(t *testing.T) {
-	core := newAuthCore(FakeAuthority{})
+	core := newAuthCore(FakeAuthorizer{})
 
 	srv, rr := FakeServer("Body", http.StatusOK)
 	BaseURL = srv.URL
