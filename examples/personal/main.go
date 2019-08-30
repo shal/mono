@@ -14,7 +14,7 @@ import (
 	"github.com/shal/mono"
 )
 
-type Day struct {
+type day struct {
 	Expense float64
 	Revenue float64
 }
@@ -60,7 +60,7 @@ func main() {
 	p.X.Label.Text = "Time"
 	p.Y.Label.Text = "UAH"
 
-	days := make([]Day, 35)
+	days := make([]day, 35)
 
 	for _, t := range transactions {
 		res := time.Unix(int64(t.Time), 0)
