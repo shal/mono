@@ -18,7 +18,41 @@
 
 :bank: Golang client for [Mono API](https://api.monobank.ua/docs/).
 
-## Install
+![Monobank API](assets/logo.png)
+
+You can find documentation for all types of API [here](./docs).
+
+1. [Introduction](#introduction)
+2. [Documentation](#documentation)
+3. [Using library](#use)
+4. [Example](#example)
+5. [Contributions](#contributions)
+
+## Introduction
+
+Read access APIs for monobank app.
+
+Please, use personal API only in non-commersial services.
+
+If you have a service or application and you want to centrally join the API for customer service, you need to connect to a corporate API that has more features.
+
+This will allow monobank clients to log in to your service (for example, in a financial manager) to provide information about the status of an account or statements.
+
+## Documentation
+
+### PUBLIC API
+
+Find dedicated doc for usage of personal API [here](./docs/public.md)
+
+### PERSONAL API
+
+Find dedicated doc for usage of personal API [here](./docs/personal.md)
+
+### CORPORATE API
+
+Find dedicated doc for usage of corporate API [here](./docs/corporate.md)
+
+## Use
 
 This package has no dependencies, install it with command below
 
@@ -26,17 +60,9 @@ This package has no dependencies, install it with command below
 go get github.com/shal/mono
 ```
 
-## Usage
+You can take a look and inspire by following [examples](./examples)
 
-You can find documentation for all types of API [here](./docs).
-
-Documentation
-
-1. [Public API](./docs/public.md)
-2. [Personal API](./docs/personal.md)
-3. [Coraporate API](./docs/corporate.md)
-
-##
+## Example
 
 ```go
 package main
