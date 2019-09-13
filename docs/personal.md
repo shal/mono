@@ -10,7 +10,7 @@ personal := mono.NewPersonal("token")
 As far as public endpoints are also available, you can get currency rates.
 
 ```go
-rates, err := personal.Rates()
+rates, err := personal.Rates(context.Background())
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)
@@ -31,7 +31,7 @@ for _, rate := range rates {
 Information about current user.
 
 ```go
-user, err := personal.User()
+user, err := personal.User(context.Background())
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)
@@ -50,7 +50,7 @@ for _, acc := range user.Accounts {
 User's transaction for a given period of time.
 
 ```go
-user, err := personal.User()
+user, err := personal.User(context.Background())
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)
@@ -68,7 +68,7 @@ for _, acc := range user.Accounts {
     }
 }
 
-transactions, err := personal.Transactions(account.ID, from, to)
+transactions, err := personal.Transactions(context.Background(), account.ID, from, to)
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)
@@ -85,7 +85,7 @@ for _, transaction := range transactions {
 Set WebHook for give URI.
 
 ```go
-_, err := personal.SetWebHook("http://example.com")
+_, err := personal.SetWebHook(context.Background(), "http://example.com")
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)

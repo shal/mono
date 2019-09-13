@@ -1,6 +1,7 @@
 package mono
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -27,7 +28,7 @@ func TestAuthCore_GetJSON(t *testing.T) {
 	defer fix()
 
 	t.Run("makes GET request", func(t *testing.T) {
-		body, status, err := core.GetJSON("/", nil)
+		body, status, err := core.GetJSON(context.Background(), "/", nil)
 		rr.AssertMethod(t, "GET")
 
 		assertEqual(t, "Body", string(body))
@@ -42,7 +43,7 @@ func TestAuthCore_GetJSON(t *testing.T) {
 			"X-Auth-Test": "Success",
 		}
 
-		body, status, err := core.GetJSON("/", headers)
+		body, status, err := core.GetJSON(context.Background(), "/", headers)
 		rr.AssertHeaders(t, headers)
 
 		assertEqual(t, "Body", string(body))
@@ -51,12 +52,12 @@ func TestAuthCore_GetJSON(t *testing.T) {
 	})
 
 	t.Run("returns body", func(t *testing.T) {
-		body, _, _ := core.GetJSON(srv.URL, nil)
+		body, _, _ := core.GetJSON(context.Background(), srv.URL, nil)
 		assertEqual(t, "Body", string(body))
 	})
 
 	t.Run("returns status", func(t *testing.T) {
-		_, status, _ := core.GetJSON("/", nil)
+		_, status, _ := core.GetJSON(context.Background(), "/", nil)
 		assertEqual(t, http.StatusOK, status)
 	})
 }
@@ -70,7 +71,7 @@ func TestAuthCore_PostJSON(t *testing.T) {
 	defer fix()
 
 	t.Run("makes POST request", func(t *testing.T) {
-		body, status, err := core.PostJSON("/", nil, nil)
+		body, status, err := core.PostJSON(context.Background(), "/", nil, nil)
 		rr.AssertMethod(t, "POST")
 
 		assertEqual(t, "Body", string(body))
@@ -85,7 +86,7 @@ func TestAuthCore_PostJSON(t *testing.T) {
 			"X-Auth-Test": "Success",
 		}
 
-		body, status, err := core.PostJSON("/", headers, nil)
+		body, status, err := core.PostJSON(context.Background(), "/", headers, nil)
 		rr.AssertHeaders(t, headers)
 
 		assertEqual(t, "Body", string(body))
@@ -94,12 +95,12 @@ func TestAuthCore_PostJSON(t *testing.T) {
 	})
 
 	t.Run("returns body", func(t *testing.T) {
-		body, _, _ := core.PostJSON(srv.URL, nil, nil)
+		body, _, _ := core.PostJSON(context.Background(), srv.URL, nil, nil)
 		assertEqual(t, "Body", string(body))
 	})
 
 	t.Run("returns status", func(t *testing.T) {
-		_, status, _ := core.PostJSON("/", nil, nil)
+		_, status, _ := core.PostJSON(context.Background(), "/", nil, nil)
 		assertEqual(t, http.StatusOK, status)
 	})
 }
@@ -130,7 +131,7 @@ func TestAuthCore_Rates(t *testing.T) {
 	defer srv.Close()
 
 	BaseURL = srv.URL
-	rates, err := core.Rates()
+	rates, err := core.Rates(context.Background())
 
 	if err != nil {
 		t.Errorf("Error: %s", err.Error())

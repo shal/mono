@@ -9,7 +9,7 @@ public := mono.NewPublic()
 Get currency rates.
 
 ```go
-rates, err := public.Rates()
+rates, err := public.Rates(context.Background())
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)

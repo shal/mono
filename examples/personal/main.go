@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"image/color"
 	"os"
@@ -19,11 +20,11 @@ type day struct {
 	Revenue float64
 }
 
-func transactions(token string) []mono.Transaction {
+func transactions(ctx context.Context, token string) []mono.Transaction {
 	personal := mono.NewPersonal(token)
 
 	// Get information about current user.
-	user, err := personal.User()
+	user, err := personal.User(ctx)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -40,7 +41,7 @@ func transactions(token string) []mono.Transaction {
 	}
 
 	// List all transactions for last month.
-	transactions, err := personal.Transactions(account.ID, time.Now().Add(-730*time.Hour), time.Now())
+	transactions, err := personal.Transactions(ctx, account.ID, time.Now().Add(-730*time.Hour), time.Now())
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -50,7 +51,10 @@ func transactions(token string) []mono.Transaction {
 }
 
 func main() {
-	transactions := transactions("token")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	transactions := transactions(ctx, "token")
 
 	p, err := plot.New()
 	if err != nil {

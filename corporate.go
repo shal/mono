@@ -1,6 +1,7 @@
 package mono
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/sha1"
@@ -86,7 +87,7 @@ func NewCorporate(keyData []byte) (*Corporate, error) {
 }
 
 // Auth initializes access.
-func (c *Corporate) Auth(callback string, permissions ...byte) (*TokenRequest, error) {
+func (c *Corporate) Auth(ctx context.Context, callback string, permissions ...byte) (*TokenRequest, error) {
 	timestamp := strconv.Itoa(int(time.Now().Unix()))
 	pp := string(permissions)
 	endpoint := "/personal/auth/request"
@@ -102,7 +103,7 @@ func (c *Corporate) Auth(callback string, permissions ...byte) (*TokenRequest, e
 		"X-Callback":    callback,
 	}
 
-	body, status, err := c.authCore.PostJSON(endpoint, headers, nil)
+	body, status, err := c.authCore.PostJSON(ctx, endpoint, headers, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +125,7 @@ func (c *Corporate) Auth(callback string, permissions ...byte) (*TokenRequest, e
 }
 
 // CheckAuth checks status of request for client's personal data.
-func (c *Corporate) CheckAuth(reqID string) (bool, error) {
+func (c *Corporate) CheckAuth(ctx context.Context, reqID string) (bool, error) {
 	timestamp := strconv.Itoa(int(time.Now().Unix()))
 	endpoint := "/personal/auth/request"
 
@@ -138,7 +139,7 @@ func (c *Corporate) CheckAuth(reqID string) (bool, error) {
 		"X-Request-Id": reqID,
 	}
 
-	body, status, err := c.authCore.GetJSON(endpoint, headers)
+	body, status, err := c.authCore.GetJSON(ctx, endpoint, headers)
 	if err != nil {
 		return false, err
 	}
@@ -156,7 +157,7 @@ func (c *Corporate) CheckAuth(reqID string) (bool, error) {
 
 // User returns user personal information from MonoBank API.
 // See https://api.monobank.ua/docs/#/definitions/UserInfo for details.
-func (c *Corporate) User(reqID string) (*UserInfo, error) {
+func (c *Corporate) User(ctx context.Context, reqID string) (*UserInfo, error) {
 	timestamp := strconv.Itoa(int(time.Now().Unix()))
 	endpoint := "/personal/client-info"
 
@@ -170,12 +171,12 @@ func (c *Corporate) User(reqID string) (*UserInfo, error) {
 		"X-Request-Id": reqID,
 	}
 
-	return c.authCore.User(headers)
+	return c.authCore.User(ctx, headers)
 }
 
 // Transactions returns list of transactions from {from} till {to} time.
 // See https://api.monobank.ua/docs/#/definitions/StatementItems for details.
-func (c *Corporate) Transactions(reqID string, account string, from, to time.Time) ([]Transaction, error) {
+func (c *Corporate) Transactions(ctx context.Context, reqID string, account string, from, to time.Time) ([]Transaction, error) {
 	timestamp := strconv.Itoa(int(time.Now().Unix()))
 	fmt.Println()
 	path := fmt.Sprintf("/personal/statement/%s/%d/%d", account, from.Unix(), to.Unix())
@@ -190,21 +191,21 @@ func (c *Corporate) Transactions(reqID string, account string, from, to time.Tim
 		"X-Request-Id": reqID,
 	}
 
-	return c.authCore.Transactions(account, from, to, headers)
+	return c.authCore.Transactions(ctx, account, from, to, headers)
 }
 
 // Rates returns list of currencies rates from MonoBank API.
 // See https://api.monobank.ua/docs/#/definitions/CurrencyInfo for details.
-func (c *Corporate) Rates() ([]Exchange, error) {
-	return c.authCore.Rates()
+func (c *Corporate) Rates(ctx context.Context) ([]Exchange, error) {
+	return c.authCore.Rates(ctx)
 }
 
 // GetJSON builds the full endpoint path and gets the raw JSON.
-func (c *Corporate) GetJSON(endpoint string, headers map[string]string) ([]byte, int, error) {
-	return c.authCore.GetJSON(endpoint, headers)
+func (c *Corporate) GetJSON(ctx context.Context, endpoint string, headers map[string]string) ([]byte, int, error) {
+	return c.authCore.GetJSON(ctx, endpoint, headers)
 }
 
 // PostJSON builds the full endpoint path and gets the raw JSON.
-func (c *Corporate) PostJSON(endpoint string, headers map[string]string, payload io.Reader) ([]byte, int, error) {
-	return c.authCore.PostJSON(endpoint, headers, payload)
+func (c *Corporate) PostJSON(ctx context.Context, endpoint string, headers map[string]string, payload io.Reader) ([]byte, int, error) {
+	return c.authCore.PostJSON(ctx, endpoint, headers, payload)
 }

@@ -10,7 +10,7 @@ corporate := mono.NewCorporate(...)
 As far as public endpoints are also available, you can get currency rates.
 
 ```go
-rates, err := corporate.Rates()
+rates, err := corporate.Rates(context.Background())
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)
@@ -32,7 +32,7 @@ Information about authorized user by request ID.
 
 ```go
 requestID := "xxx"
-user, err := corporate.User(requestID)
+user, err := corporate.User(context.Background(), requestID)
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)
@@ -52,7 +52,7 @@ User's transaction for a given period of time.
 
 ```go
 requestID := "xxx"
-user, err := corporate.User(requestID)
+user, err := corporate.User(context.Background(), requestID)
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)
@@ -70,7 +70,7 @@ for _, acc := range user.Accounts {
     }
 }
 
-transactions, err := corporate.Transactions(requestID, account.ID, from, to)
+transactions, err := corporate.Transactions(context.Background(), requestID, account.ID, from, to)
 if err != nil {
     fmt.Println(err.Error())
     os.Exit(1)

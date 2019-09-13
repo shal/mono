@@ -1,16 +1,21 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/shal/mono"
 )
 
 func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	public := mono.NewPublic()
 
-	rates, err := public.Rates()
+	rates, err := public.Rates(ctx)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
