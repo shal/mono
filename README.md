@@ -78,7 +78,7 @@ import (
 func main() {
     personal := mono.NewPersonal("token ")
 
-    user, err := personal.User()
+    user, err := personal.User(context.Background())
     if err != nil {
         fmt.Println(err.Error())
         os.Exit(1)
@@ -96,7 +96,7 @@ func main() {
         }
     }
 
-    transactions, err := personal.Transactions(account.ID, from, to)
+    transactions, err := personal.Transactions(context.Background(), account.ID, from, to)
     if err != nil {
         fmt.Println(err.Error())
         os.Exit(1)
