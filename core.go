@@ -1,6 +1,7 @@
 package mono
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
@@ -45,13 +46,13 @@ func newCore() *core {
 }
 
 // GetJSON builds the full endpoint path and gets the raw JSON.
-func (c *core) GetJSON(endpoint string, headers map[string]string) ([]byte, int, error) {
+func (c *core) GetJSON(ctx context.Context, endpoint string, headers map[string]string) ([]byte, int, error) {
 	uri, err := c.buildURL(endpoint)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	r, err := http.NewRequest("GET", uri, nil)
+	r, err := http.NewRequestWithContext(ctx, "GET", uri, nil)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -73,6 +74,7 @@ func (c *core) GetJSON(endpoint string, headers map[string]string) ([]byte, int,
 
 // PostJSON builds the full endpoint path and gets the raw JSON.
 func (c *core) PostJSON(
+	ctx context.Context,
 	endpoint string,
 	headers map[string]string,
 	payload io.Reader,
@@ -82,7 +84,7 @@ func (c *core) PostJSON(
 		return nil, 0, err
 	}
 
-	r, err := http.NewRequest("POST", uri, payload)
+	r, err := http.NewRequestWithContext(ctx, "POST", uri, payload)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -104,8 +106,8 @@ func (c *core) PostJSON(
 
 // Rates returns list of currencies rates from MonoBank API.
 // See https://api.monobank.ua/docs/#/definitions/CurrencyInfo for details.
-func (c *core) Rates() ([]Exchange, error) {
-	contents, status, err := c.GetJSON("/bank/currency", nil)
+func (c *core) Rates(ctx context.Context) ([]Exchange, error) {
+	contents, status, err := c.GetJSON(ctx, "/bank/currency", nil)
 	if err != nil {
 		return nil, err
 	}

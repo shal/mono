@@ -2,6 +2,7 @@ package mono
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -29,13 +30,13 @@ func newAuthCore(auth Authorizer) *authCore {
 }
 
 // GetJSON builds the full endpoint path and gets the raw JSON.
-func (ac *authCore) GetJSON(endpoint string, headers map[string]string) ([]byte, int, error) {
+func (ac *authCore) GetJSON(ctx context.Context, endpoint string, headers map[string]string) ([]byte, int, error) {
 	uri, err := ac.buildURL(endpoint)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	r, err := http.NewRequest("GET", uri, nil)
+	r, err := http.NewRequestWithContext(ctx, "GET", uri, nil)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -61,6 +62,7 @@ func (ac *authCore) GetJSON(endpoint string, headers map[string]string) ([]byte,
 
 // PostJSON builds the full endpoint path and gets the raw JSON.
 func (ac *authCore) PostJSON(
+	ctx context.Context,
 	endpoint string,
 	headers map[string]string,
 	payload io.Reader,
@@ -70,7 +72,7 @@ func (ac *authCore) PostJSON(
 		return nil, 0, err
 	}
 
-	r, err := http.NewRequest("POST", uri, payload)
+	r, err := http.NewRequestWithContext(ctx, "POST", uri, payload)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -96,8 +98,8 @@ func (ac *authCore) PostJSON(
 
 // User returns user personal information from MonoBank API.
 // See https://api.monobank.ua/docs/#operation--personal-client-info-get for details.
-func (ac *authCore) User(headers map[string]string) (*UserInfo, error) {
-	body, status, err := ac.GetJSON("/personal/client-info", headers)
+func (ac *authCore) User(ctx context.Context, headers map[string]string) (*UserInfo, error) {
+	body, status, err := ac.GetJSON(ctx, "/personal/client-info", headers)
 	if err != nil {
 		return nil, err
 	}
@@ -121,6 +123,7 @@ func (ac *authCore) User(headers map[string]string) (*UserInfo, error) {
 // Transactions returns list of transactions from {from} till {to} time.
 // See https://api.monobank.ua/docs/#/definitions/StatementItems for details.
 func (ac *authCore) Transactions(
+	ctx context.Context,
 	account string,
 	from, to time.Time,
 	headers map[string]string,
@@ -129,7 +132,7 @@ func (ac *authCore) Transactions(
 	error,
 ) {
 	path := fmt.Sprintf("/personal/statement/%s/%d/%d", account, from.Unix(), to.Unix())
-	body, status, err := ac.GetJSON(path, headers)
+	body, status, err := ac.GetJSON(ctx, path, headers)
 	if err != nil {
 		return nil, err
 	}
@@ -152,13 +155,13 @@ func (ac *authCore) Transactions(
 
 // SetWebHook sets WebHook URL for authorized user.
 // See https://api.monobank.ua/docs#operation--personal-webhook-post for details.
-func (ac *authCore) SetWebHook(url string, headers map[string]string) ([]byte, error) {
+func (ac *authCore) SetWebHook(ctx context.Context, url string, headers map[string]string) ([]byte, error) {
 	buff, err := json.Marshal(struct{ WebHookUrl string }{url})
 	if err != nil {
 		return nil, err
 	}
 
-	contents, status, err := ac.PostJSON("/personal/webhook", headers, bytes.NewReader(buff))
+	contents, status, err := ac.PostJSON(ctx, "/personal/webhook", headers, bytes.NewReader(buff))
 	if err != nil {
 		return nil, err
 	}
