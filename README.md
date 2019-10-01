@@ -40,17 +40,11 @@ This will allow monobank clients to log in to your service (for example, in a fi
 
 ## Documentation
 
-### PUBLIC API
+As far as monobank have 3 types of API, we prepated three usage documentations:
 
-Find dedicated doc for usage of personal API [here](./docs/public.md)
-
-### PERSONAL API
-
-Find dedicated doc for usage of personal API [here](./docs/personal.md)
-
-### CORPORATE API
-
-Find dedicated doc for usage of corporate API [here](./docs/corporate.md)
+* [Public](./docs/public.md)
+* [Personal](./docs/personal.md)
+* [Corporate](./docs/corporate.md)
 
 ## Use
 
@@ -76,7 +70,7 @@ import (
 )
 
 func main() {
-    personal := mono.NewPersonal("token ")
+    personal := mono.NewPersonal("token")
 
     user, err := personal.User()
     if err != nil {
@@ -114,10 +108,6 @@ func main() {
 More about this example [here](./examples/personal/main.go).
 
 ![Example](./examples/personal/report.png)
-
-## Contributions
-
-You can send me some tips to [MonoBank](https://send.monobank.com.ua/2FVYpRHoi), if this package was useful.
 
 ## License
 
