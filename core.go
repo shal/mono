@@ -1,6 +1,7 @@
 package mono
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
@@ -19,6 +20,22 @@ var BaseURL = DefaultBaseURL
 
 type core struct {
 	http.Client
+
+	context context.Context
+}
+
+// newCore creates a new MonoBank client with some reasonable HTTP request defaults.
+func newCore(context context.Context) *core {
+	return &core{
+		context: context,
+		Client: http.Client{
+			Timeout: time.Second * 5,
+			Transport: &http.Transport{
+				MaxIdleConns:        50,
+				MaxIdleConnsPerHost: 50,
+			},
+		},
+	}
 }
 
 func (c *core) buildURL(endpoint string) (string, error) {
@@ -31,19 +48,6 @@ func (c *core) buildURL(endpoint string) (string, error) {
 	return baseURL.String(), nil
 }
 
-// newCore creates a new MonoBank client with some reasonable HTTP request defaults.
-func newCore() *core {
-	return &core{
-		Client: http.Client{
-			Timeout: time.Second * 5,
-			Transport: &http.Transport{
-				MaxIdleConns:        50,
-				MaxIdleConnsPerHost: 50,
-			},
-		},
-	}
-}
-
 // GetJSON builds the full endpoint path and gets the raw JSON.
 func (c *core) GetJSON(endpoint string, headers map[string]string) ([]byte, int, error) {
 	uri, err := c.buildURL(endpoint)
@@ -51,17 +55,23 @@ func (c *core) GetJSON(endpoint string, headers map[string]string) ([]byte, int,
 		return nil, 0, err
 	}
 
-	r, err := http.NewRequest("GET", uri, nil)
+	var request *http.Request
+	if c.context != nil {
+		request, err = http.NewRequestWithContext(c.context, "GET", uri, nil)
+	} else {
+		request, err = http.NewRequest("GET", uri, nil)
+	}
+
 	if err != nil {
 		return nil, 0, err
 	}
 
 	// Set headers.
 	for k, v := range headers {
-		r.Header.Set(k, v)
+		request.Header.Set(k, v)
 	}
 
-	resp, err := c.Do(r)
+	resp, err := c.Do(request)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -82,17 +92,19 @@ func (c *core) PostJSON(
 		return nil, 0, err
 	}
 
-	r, err := http.NewRequest("POST", uri, payload)
-	if err != nil {
-		return nil, 0, err
+	var request *http.Request
+	if c.context != nil {
+		request, err = http.NewRequestWithContext(c.context, "POST", uri, nil)
+	} else {
+		request, err = http.NewRequest("POST", uri, nil)
 	}
 
 	// Set headers.
 	for k, v := range headers {
-		r.Header.Set(k, v)
+		request.Header.Set(k, v)
 	}
 
-	resp, err := c.Do(r)
+	resp, err := c.Do(request)
 	if err != nil {
 		return nil, 0, err
 	}

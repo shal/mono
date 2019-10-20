@@ -1,6 +1,7 @@
 package mono
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/sha1"
@@ -70,6 +71,12 @@ func newCorporateAuth(
 		PrivateKey: privateKey,
 		KeyID:      keyID,
 	}, nil
+}
+
+func (c *Corporate) WithContext(context context.Context) Corporate {
+	newP := *c
+	newP.authCore.context = context
+	return newP
 }
 
 // NewCorporate returns new client of MonoBank Corporate API.

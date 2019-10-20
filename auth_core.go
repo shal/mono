@@ -35,21 +35,26 @@ func (ac *authCore) GetJSON(endpoint string, headers map[string]string) ([]byte,
 		return nil, 0, err
 	}
 
-	r, err := http.NewRequest("GET", uri, nil)
+	var request *http.Request
+	if ac.context != nil {
+		request, err = http.NewRequestWithContext(ac.context, "GET", uri, nil)
+	} else {
+		request, err = http.NewRequest("GET", uri, nil)
+	}
 	if err != nil {
 		return nil, 0, err
 	}
 
-	if err := ac.auth.Auth(r); err != nil {
+	if err := ac.auth.Auth(request); err != nil {
 		return nil, 0, err
 	}
 
 	// Set headers.
 	for k, v := range headers {
-		r.Header.Set(k, v)
+		request.Header.Set(k, v)
 	}
 
-	resp, err := ac.Do(r)
+	resp, err := ac.Do(request)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -70,21 +75,26 @@ func (ac *authCore) PostJSON(
 		return nil, 0, err
 	}
 
-	r, err := http.NewRequest("POST", uri, payload)
+	var request *http.Request
+	if ac.context != nil {
+		request, err = http.NewRequestWithContext(ac.context, "POST", uri, payload)
+	} else {
+		request, err = http.NewRequest("POST", uri, payload)
+	}
 	if err != nil {
 		return nil, 0, err
 	}
 
-	if err := ac.auth.Auth(r); err != nil {
+	if err := ac.auth.Auth(request); err != nil {
 		return nil, 0, err
 	}
 
 	// Set headers.
 	for k, v := range headers {
-		r.Header.Set(k, v)
+		request.Header.Set(k, v)
 	}
 
-	resp, err := ac.Do(r)
+	resp, err := ac.Do(request)
 	if err != nil {
 		return nil, 0, err
 	}

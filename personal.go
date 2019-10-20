@@ -1,6 +1,7 @@
 package mono
 
 import (
+	"context"
 	"net/http"
 	"time"
 )
@@ -30,26 +31,48 @@ func NewPersonal(token string) *Personal {
 	}
 }
 
+func (p *Personal) WithContext(context context.Context) Personal {
+	newP := *p
+	newP.context = context
+	return newP
+}
+
 // User returns user personal information from MonoBank API.
 // See https://api.monobank.ua/docs/#operation--personal-client-info-get for details.
 func (p *Personal) User() (*UserInfo, error) {
-	return p.authCore.User(nil)
+	if p.context == nil {
+		return p.authCore.User(nil)
+	} else {
+		return p.authCore.User(nil)
+	}
 }
 
 // Transactions returns list of transactions from {from} till {to} time.
 // See https://api.monobank.ua/docs/#/definitions/StatementItems for details.
 func (p *Personal) Transactions(account string, from, to time.Time) ([]Transaction, error) {
-	return p.authCore.Transactions(account, from, to, nil)
+	if p.context == nil {
+		return p.authCore.Transactions(account, from, to, nil)
+	} else {
+		return p.authCore.Transactions(account, from, to, nil)
+	}
 }
 
 // SetWebHook sets WebHook URL for authorized user.
 // See https://api.monobank.ua/docs#operation--personal-webhook-post for details.
 func (p *Personal) SetWebHook(url string) ([]byte, error) {
-	return p.authCore.SetWebHook(url, nil)
+	if p.context == nil {
+		return p.authCore.SetWebHook(url, nil)
+	} else {
+		return p.authCore.SetWebHook(url, nil)
+	}
 }
 
 // Rates returns list of currencies rates from MonoBank API.
 // See https://api.monobank.ua/docs/#/definitions/CurrencyInfo for details.
 func (p *Personal) Rates() ([]Exchange, error) {
-	return p.authCore.Rates()
+	if p.context == nil {
+		return p.authCore.Rates()
+	} else {
+		return p.authCore.Rates()
+	}
 }

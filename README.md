@@ -2,13 +2,10 @@
 
 [godoc]: https://godoc.org/github.com/shal/mono
 [godoc-img]: https://godoc.org/github.com/shal/mono?status.svg
-
 [ci]: https://circleci.com/gh/shal/mono
 [ci-img]: https://circleci.com/gh/shal/mono.svg?style=svg
-
 [goreport]: https://goreportcard.com/report/github.com/shal/mono
 [goreport-img]: https://goreportcard.com/badge/github.com/shal/mono
-
 [version]: https://img.shields.io/github/v/tag/shal/mono?sort=semver
 
 [![Circle CI][ci-img]][ci]
@@ -42,9 +39,9 @@ This will allow monobank clients to log in to your service (for example, in a fi
 
 As far as monobank have 3 types of API, we prepated three usage documentations:
 
-* [Public](./docs/public.md)
-* [Personal](./docs/personal.md)
-* [Corporate](./docs/corporate.md)
+- [Public](./docs/public.md)
+- [Personal](./docs/personal.md)
+- [Corporate](./docs/corporate.md)
 
 ## Use
 
