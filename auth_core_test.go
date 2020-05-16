@@ -15,17 +15,12 @@ func (fake FakeAuthorizer) Auth(request *http.Request) error {
 	return nil
 }
 
-func fix() {
-	BaseURL = DefaultBaseURL
-}
-
 func TestAuthCore_GetJSON(t *testing.T) {
 	core := newAuthCore(FakeAuthorizer{})
 
 	srv, rr := FakeServer("Body", http.StatusOK)
-	BaseURL = srv.URL
+	core.SetBaseURL(srv.URL)
 	defer srv.Close()
-	defer fix()
 
 	t.Run("makes GET request", func(t *testing.T) {
 		body, status, err := core.GetJSON(context.Background(), "/", nil)
@@ -66,9 +61,8 @@ func TestAuthCore_PostJSON(t *testing.T) {
 	core := newAuthCore(FakeAuthorizer{})
 
 	srv, rr := FakeServer("Body", http.StatusOK)
-	BaseURL = srv.URL
+	core.SetBaseURL(srv.URL)
 	defer srv.Close()
-	defer fix()
 
 	t.Run("makes POST request", func(t *testing.T) {
 		body, status, err := core.PostJSON(context.Background(), "/", nil, nil)
@@ -130,7 +124,8 @@ func TestAuthCore_Rates(t *testing.T) {
 	)
 	defer srv.Close()
 
-	BaseURL = srv.URL
+	core.SetBaseURL(srv.URL)
+
 	rates, err := core.Rates(context.Background())
 
 	if err != nil {
@@ -142,6 +137,4 @@ func TestAuthCore_Rates(t *testing.T) {
 			t.Errorf("%v and %v is not equal", rate, expected)
 		}
 	}
-
-	BaseURL = DefaultBaseURL
 }

@@ -59,7 +59,7 @@ func TestCore_GetJSON(t *testing.T) {
 	core := newCore()
 
 	srv, rr := FakeServer("Body", http.StatusOK)
-	BaseURL = srv.URL
+	core.SetBaseURL(srv.URL)
 	defer srv.Close()
 
 	t.Run("makes GET request", func(t *testing.T) {
@@ -100,7 +100,7 @@ func TestCore_PostJSON(t *testing.T) {
 	core := newCore()
 
 	srv, rr := FakeServer("Body", http.StatusOK)
-	BaseURL = srv.URL
+	core.SetBaseURL(srv.URL)
 	defer srv.Close()
 
 	t.Run("makes POST request", func(t *testing.T) {
@@ -164,7 +164,7 @@ func TestCore_Rates(t *testing.T) {
 	)
 	defer srv.Close()
 
-	BaseURL = srv.URL
+	core.SetBaseURL(srv.URL)
 	rates, err := core.Rates(context.Background())
 
 	if err != nil {
@@ -176,6 +176,4 @@ func TestCore_Rates(t *testing.T) {
 			t.Errorf("%v and %v is not equal", rate, expected)
 		}
 	}
-
-	BaseURL = DefaultBaseURL
 }
