@@ -15,10 +15,10 @@ jobs:
       - run:
           name: Lint Code
           environment:
-            GO111MODULE: "off"
+            GO111MODULE: "on"
           command: |
-            go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
-            GO111MODULE=on golangci-lint run
+            go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.26.0
+            golangci-lint run
 
   release:
     docker:
