@@ -15,15 +15,14 @@ import (
 // DefaultBaseURL is production URL of Monobank API.
 const DefaultBaseURL = "https://api.monobank.ua"
 
-// BaseURL is a customizable URL of API.
-var BaseURL = DefaultBaseURL
-
 type core struct {
 	http.Client
+
+	baseURL string
 }
 
 func (c *core) buildURL(endpoint string) (string, error) {
-	baseURL, err := url.Parse(BaseURL)
+	baseURL, err := url.Parse(c.baseURL)
 	if err != nil {
 		return "", err
 	}
@@ -35,6 +34,7 @@ func (c *core) buildURL(endpoint string) (string, error) {
 // newCore creates a new MonoBank client with some reasonable HTTP request defaults.
 func newCore() *core {
 	return &core{
+		baseURL: DefaultBaseURL,
 		Client: http.Client{
 			Timeout: time.Second * 5,
 			Transport: &http.Transport{
@@ -126,4 +126,9 @@ func (c *core) Rates(ctx context.Context) ([]Exchange, error) {
 	}
 
 	return data, nil
+}
+
+// SetBaseURL set baseURL to the new specified URL.
+func (c *core) SetBaseURL(url string) {
+	c.baseURL = url
 }
