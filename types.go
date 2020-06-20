@@ -5,11 +5,20 @@ type CashBackType string
 
 const (
 	// None is cash-back type for foreign currencies accounts.
-	None = "None"
+	None CashBackType = "None"
 	// UAH is default cash-back type for almost all accounts.
-	UAH = "UAH"
+	UAH CashBackType = "UAH"
 	// Miles available only on Iron Card.
-	Miles = "Miles"
+	Miles CashBackType = "Miles"
+)
+
+// AccountType is type of the account.
+type AccountType string
+
+const (
+	Platinum AccountType = "platinum"
+	White    AccountType = "white"
+	Black    AccountType = "black"
 )
 
 // UserInfo is an overview of user and related accounts.
@@ -32,6 +41,7 @@ type Account struct {
 	CreditLimit  int          `json:"creditLimit"`  // Credit limit.
 	CurrencyCode int32        `json:"currencyCode"` // Currency code in ISO4217.
 	CashBackType CashBackType `json:"cashbackType"` // Type of cash-back.
+	Type         AccountType  `json:"type"`         // Type of card.
 }
 
 // Transaction is a banking transaction.
