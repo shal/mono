@@ -1,5 +1,7 @@
 package mono
 
+import "time"
+
 // CashBackType is type of cash-back that credits to the account.
 type CashBackType string
 
@@ -46,15 +48,15 @@ type Account struct {
 
 // Transaction is a banking transaction.
 type Transaction struct {
-	ID              string `json:"id"`              // Unique transaction ID.
-	Time            int32  `json:"time"`            // Unix time of transaction.
-	Description     string `json:"description"`     // Message attached to transaction.
-	MCC             int32  `json:"mcc"`             // Merchant Category Code using ISO18245.
-	Hold            bool   `json:"hold"`            // Authorization hold.
-	Amount          int64  `json:"amount"`          // Amount in account currency (cents).
-	OperationAmount int64  `json:"operationAmount"` // Amount in transaction currency (cents).
-	CurrencyCode    int32  `json:"currencyCode"`    // Currency code using ISO4217.
-	CommissionRate  int64  `json:"commissionRate"`  // Amount of commission in account currency.
-	CashBackAmount  int64  `json:"cashbackAmount"`  // Amount of cash-back in account currency.
-	Balance         int64  `json:"balance"`         // Balance in account currency.
+	ID              string    `json:"id"`              // Unique transaction ID.
+	Time            time.Time `json:"time"`            // UTC time of transaction.
+	Description     string    `json:"description"`     // Message attached to transaction.
+	MCC             int32     `json:"mcc"`             // Merchant Category Code using ISO18245.
+	Hold            bool      `json:"hold"`            // Authorization hold.
+	Amount          int64     `json:"amount"`          // Amount in account currency (cents).
+	OperationAmount int64     `json:"operationAmount"` // Amount in transaction currency (cents).
+	CurrencyCode    int32     `json:"currencyCode"`    // Currency code using ISO4217.
+	CommissionRate  int64     `json:"commissionRate"`  // Amount of commission in account currency.
+	CashBackAmount  int64     `json:"cashbackAmount"`  // Amount of cash-back in account currency.
+	Balance         int64     `json:"balance"`         // Balance in account currency.
 }

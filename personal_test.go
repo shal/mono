@@ -49,7 +49,7 @@ func TestPersonal_Transactions(t *testing.T) {
 [
     {
         "id": "zxcvtyuioasdfghj",
-        "time": 1593959742,
+        "time": 1593259442,
         "description": "5************6",
         "mcc": 4829,
         "amount": -128200,
@@ -62,7 +62,7 @@ func TestPersonal_Transactions(t *testing.T) {
     },
     {
         "id": "qwertyuioasdfghj",
-        "time": 1593936446,
+        "time": 1583000643,
         "description": "Киевстар\n+380688888888",
         "mcc": 4814,
         "amount": -20000,
@@ -77,7 +77,7 @@ func TestPersonal_Transactions(t *testing.T) {
 	expectedTransactions := []Transaction{
 		{
 			ID:              "zxcvtyuioasdfghj",
-			Time:            1593959742,
+			Time:            time.Date(2020, 6, 27, 12, 04, 02, 00, time.UTC),
 			Description:     "5************6",
 			MCC:             4829,
 			Hold:            true,
@@ -90,7 +90,7 @@ func TestPersonal_Transactions(t *testing.T) {
 		},
 		{
 			ID:              "qwertyuioasdfghj",
-			Time:            1593936446,
+			Time:            time.Date(2020, 2, 29, 18, 24, 03, 00, time.UTC),
 			Description:     "Киевстар\n+380688888888",
 			MCC:             4814,
 			Hold:            true,
