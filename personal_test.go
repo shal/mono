@@ -77,7 +77,7 @@ func TestPersonal_Transactions(t *testing.T) {
 	expectedTransactions := []Transaction{
 		{
 			ID:              "zxcvtyuioasdfghj",
-			Time:            time.Date(2020, 6, 27, 12, 04, 02, 00, time.UTC),
+			Time:            Time{time.Date(2020, 6, 27, 12, 04, 02, 00, time.UTC)},
 			Description:     "5************6",
 			MCC:             4829,
 			Hold:            true,
@@ -90,7 +90,7 @@ func TestPersonal_Transactions(t *testing.T) {
 		},
 		{
 			ID:              "qwertyuioasdfghj",
-			Time:            time.Date(2020, 2, 29, 18, 24, 03, 00, time.UTC),
+			Time:            Time{time.Date(2020, 2, 29, 18, 24, 03, 00, time.UTC)},
 			Description:     "Киевстар\n+380688888888",
 			MCC:             4814,
 			Hold:            true,
