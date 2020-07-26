@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func TestTime_JsonUnmarshal(t *testing.T) {
+func TestTime_UnmarshalJSON(t *testing.T) {
 	jsonString := []byte(`
     {
         "time": 1583000643
@@ -26,7 +26,7 @@ func TestTime_JsonUnmarshal(t *testing.T) {
 	}
 }
 
-func TestTime_JsonMarshal(t *testing.T) {
+func TestTime_MarshalJson(t *testing.T) {
 	transactionData := struct {
 		Time Time `json:"time"`
 	}{
