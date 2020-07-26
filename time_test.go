@@ -16,10 +16,10 @@ func TestTime_UnmarshalJSON(t *testing.T) {
 	err := json.Unmarshal(jsonString, &actualData)
 
 	if err != nil {
-		t.Fatalf("expected error: nil, actual error: %v", err)
+		t.Errorf("expected error: nil, actual error: %v", err)
 	}
 	if expectedData != actualData {
-		t.Fatalf("expected data: %v, actual data: %v", expectedData, actualData)
+		t.Errorf("expected data: %v, actual data: %v", expectedData, actualData)
 	}
 }
 
@@ -34,9 +34,9 @@ func TestTime_MarshalJson(t *testing.T) {
 	actualJson, err := json.Marshal(&transactionData)
 
 	if err != nil {
-		t.Fatalf("expected error: nil, actual error: %v", err)
+		t.Errorf("expected error: nil, actual error: %v", err)
 	}
 	if expectedJson != string(actualJson) {
-		t.Fatalf("expected data: %v, actual data: %v", expectedJson, string(actualJson))
+		t.Errorf("expected data: %v, actual data: %v", expectedJson, string(actualJson))
 	}
 }
