@@ -18,9 +18,8 @@ func TestTime_UnmarshalJSON(t *testing.T) {
 	if err != nil {
 		t.Errorf("expected error: nil, actual error: %v", err)
 	}
-	if expectedData != actualData {
-		t.Errorf("expected data: %v, actual data: %v", expectedData, actualData)
-	}
+
+	assertEqual(t, expectedData, actualData)
 }
 
 func TestTime_MarshalJson(t *testing.T) {
