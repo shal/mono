@@ -7,15 +7,12 @@ import (
 )
 
 func TestTime_UnmarshalJSON(t *testing.T) {
-	jsonString := []byte(`
-    {
-        "time": 1583000643
-	}`)
-	expectedData := Transaction{
+	jsonString := []byte(`{"time": 1583000643}`)
+	expectedData := struct{ Time Time }{
 		Time: Time{time.Date(2020, 2, 29, 18, 24, 03, 00, time.UTC)},
 	}
 
-	var actualData Transaction
+	var actualData struct{ Time Time }
 	err := json.Unmarshal(jsonString, &actualData)
 
 	if err != nil {
