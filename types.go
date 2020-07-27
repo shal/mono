@@ -47,7 +47,7 @@ type Account struct {
 // Transaction is a banking transaction.
 type Transaction struct {
 	ID              string `json:"id"`              // Unique transaction ID.
-	Time            int32  `json:"time"`            // Unix time of transaction.
+	Time            Time   `json:"time"`            // UTC time of transaction.
 	Description     string `json:"description"`     // Message attached to transaction.
 	MCC             int32  `json:"mcc"`             // Merchant Category Code using ISO18245.
 	Hold            bool   `json:"hold"`            // Authorization hold.
