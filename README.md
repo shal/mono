@@ -1,13 +1,13 @@
 # MonoBank SDK
 
-[godoc]: https://godoc.org/github.com/shal/mono
-[godoc-img]: https://godoc.org/github.com/shal/mono?status.svg
+[godoc]: https://godoc.org/shal.dev/mono
+[godoc-img]: https://godoc.org/shal.dev/mono?status.svg
 
 [ci]: https://circleci.com/gh/shal/mono
 [ci-img]: https://circleci.com/gh/shal/mono.svg?style=svg
 
-[goreport]: https://goreportcard.com/report/github.com/shal/mono
-[goreport-img]: https://goreportcard.com/badge/github.com/shal/mono
+[goreport]: https://goreportcard.com/report/shal.dev/mono
+[goreport-img]: https://goreportcard.com/badge/shal.dev/mono
 
 [version]: https://img.shields.io/github/v/tag/shal/mono?sort=semver
 
@@ -51,7 +51,7 @@ As far as monobank have 3 types of API, we prepated three usage documentations:
 This package has no dependencies, install it with command below
 
 ```sh
-go get github.com/shal/mono
+go get shal.dev/mono
 ```
 
 You can take a look and inspire by following [examples](./examples)
@@ -66,7 +66,7 @@ import (
     "os"
     "time"
 
-    "github.com/shal/mono"
+    "shal.dev/mono"
 )
 
 func main() {
@@ -84,7 +84,7 @@ func main() {
     var account mono.Account
 
     for _, acc := range user.Accounts {
-        ccy, _ := mono.CurrencyFromISO4217(acc.CurrencyCode)
+        ccy, _ := iso4217.CurrencyFromISO4217(acc.CurrencyCode)
         if ccy.Code == "UAH" {
             account = acc
         }

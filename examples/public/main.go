@@ -3,27 +3,34 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
+	"log"
+	"shal.dev/mono/iso4217"
 	"time"
 
-	"github.com/shal/mono"
+	"shal.dev/mono"
 )
 
 func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	public := mono.NewPublic()
+	public, err := mono.NewPublic()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	rates, err := public.Rates(ctx)
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	for _, rate := range rates {
-		ccyA, _ := mono.CurrencyFromISO4217(rate.CodeA)
-		ccyB, _ := mono.CurrencyFromISO4217(rate.CodeB)
+		ccyA, err := iso4217.CurrencyFromISO4217(rate.CodeA)
+		if err != nil {
+			log.Println(rate.CodeA)
+			continue
+		}
+		ccyB, _ := iso4217.CurrencyFromISO4217(rate.CodeB)
 
 		if rate.RateBuy != 0 {
 			fmt.Printf("%s/%s - %f\n", ccyA.Name, ccyB.Name, rate.RateBuy)

@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"image/color"
+	"log"
 	"os"
 	"time"
 
@@ -12,7 +12,9 @@ import (
 	"gonum.org/v1/plot/vg"
 	"gonum.org/v1/plot/vg/draw"
 
-	"github.com/shal/mono"
+	"shal.dev/mono"
+	"shal.dev/mono/auth"
+	"shal.dev/mono/iso4217"
 )
 
 type day struct {
@@ -20,45 +22,58 @@ type day struct {
 	Revenue float64
 }
 
-func transactions(ctx context.Context, token string) []mono.Transaction {
-	personal := mono.NewPersonal(token)
+func transactions(ctx context.Context, token string) ([]mono.Transaction, error) {
+	personal := auth.NewPersonal(token)
+
+	client, err := mono.NewClient(personal)
+	if err != nil {
+		return nil, err
+	}
 
 	// Get information about current user.
-	user, err := personal.User(ctx)
+	user, err := client.User(ctx, nil)
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		return nil, err
 	}
 
 	// Find UAH account.
-	account := mono.Account{}
+	var account mono.Account
 
 	for _, acc := range user.Accounts {
-		ccy, _ := mono.CurrencyFromISO4217(acc.CurrencyCode)
-		if ccy.Code == "UAH" {
-			account = acc
+		if acc.Type == mono.Platinum || acc.Type == mono.Black {
+			ccy, _ := iso4217.CurrencyFromISO4217(acc.CurrencyCode)
+			if ccy.Code == "UAH" {
+				account = acc
+			}
 		}
 	}
 
 	// List all transactions for last month.
-	transactions, err := personal.Transactions(ctx, account.ID, time.Now().Add(-730*time.Hour), time.Now())
+	transactions, err := client.Transactions(ctx, account.ID, time.Now().Add(-730*time.Hour), time.Now(), nil)
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		return nil, err
 	}
 
-	return transactions
+	return transactions, nil
 }
 
 func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	transactions := transactions(ctx, "token")
+	token := os.Getenv("MONO_TOKEN")
+	if token == "" {
+		log.Fatal("MONO_TOKEN is not set")
+	}
+
+	transactions, err := transactions(ctx, token)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	p, err := plot.New()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	p.X.Label.Text = "Time"
@@ -67,23 +82,23 @@ func main() {
 	days := make([]day, 35)
 
 	for _, t := range transactions {
-		res := time.Unix(int64(t.Time), 0)
 		if t.Amount < 0 {
-			days[res.Day()].Expense += float64(-t.Amount/100) + float64(-t.Amount%100)
+			days[t.Time.Day()].Expense += float64(-t.Amount/100) + float64(-t.Amount%100)
 		} else {
-			days[res.Day()].Revenue += float64(t.Amount/100) + float64(t.Amount%100)
+			days[t.Time.Day()].Revenue += float64(t.Amount/100) + float64(t.Amount%100)
 		}
 	}
 
 	expenses := make(plotter.XYs, len(days))
 	revenues := make(plotter.XYs, len(days))
+
 	x := 0
 	for _, v := range days {
 		expenses[x].X = float64(x)
 		revenues[x].X = float64(x)
 		expenses[x].Y = v.Expense
 		revenues[x].Y = v.Revenue
-		x += 1
+		x++
 	}
 
 	expensesPlot, err := plotter.NewLine(expenses)

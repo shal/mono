@@ -1,3 +1,3 @@
-module github.com/shal/mono
+module shal.dev/mono
 
 go 1.14

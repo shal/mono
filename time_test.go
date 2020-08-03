@@ -8,18 +8,20 @@ import (
 
 func TestTime_UnmarshalJSON(t *testing.T) {
 	jsonString := []byte(`{"time": 1583000643}`)
-	expectedData := struct{ Time Time }{
+	expected := struct{ Time Time }{
 		Time: Time{time.Date(2020, 2, 29, 18, 24, 03, 00, time.UTC)},
 	}
 
-	var actualData struct{ Time Time }
-	err := json.Unmarshal(jsonString, &actualData)
+	var actual struct{ Time Time }
+	err := json.Unmarshal(jsonString, &actual)
 
 	if err != nil {
-		t.Errorf("expected error: nil, actual error: %v", err)
+		t.Fatalf("did not expect error: %v", err)
 	}
 
-	assertEqual(t, expectedData, actualData)
+	if expected != actual {
+		t.Errorf("expected: %v, actual: %v", expected, actual)
+	}
 }
 
 func TestTime_MarshalJson(t *testing.T) {

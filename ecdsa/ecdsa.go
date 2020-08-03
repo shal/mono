@@ -1,4 +1,4 @@
-package mono
+package ecdsa
 
 import (
 	"crypto/ecdsa"
@@ -14,6 +14,8 @@ import (
 	"math/big"
 	"reflect"
 )
+
+type PrivateKey = ecdsa.PrivateKey
 
 var (
 	secp256k1    *CurveParams
@@ -59,7 +61,7 @@ func DefaultSignTool() *SignTool {
 }
 
 // DecodePrivateKey decodes privage key into Elliptic Curve Digital Signature Algorithm private key.
-func (t *SignTool) DecodePrivateKey(b []byte) (*ecdsa.PrivateKey, error) {
+func (t *SignTool) DecodePrivateKey(b []byte) (*PrivateKey, error) {
 	var privateKeyPemBlock *pem.Block
 
 	for {
@@ -81,7 +83,7 @@ func (t *SignTool) DecodePrivateKey(b []byte) (*ecdsa.PrivateKey, error) {
 }
 
 // Sign signs string with specified private key.
-func (t *SignTool) Sign(key *ecdsa.PrivateKey, str string) (string, error) {
+func (t *SignTool) Sign(key *PrivateKey, str string) (string, error) {
 	hash := sha256.Sum256([]byte(str))
 
 	r, s, err := ecdsa.Sign(rand.Reader, key, hash[:])
@@ -153,7 +155,7 @@ func namedCurveFromOID(oid asn1.ObjectIdentifier) elliptic.Curve {
 }
 
 // ParseCustomECPrivateKey returns Elliptic Curve Digital Signature Algorithm private key from file content.
-func ParseCustomECPrivateKey(der []byte) (key *ecdsa.PrivateKey, err error) {
+func ParseCustomECPrivateKey(der []byte) (key *PrivateKey, err error) {
 	var privKey ecPrivateKey
 	if _, err := asn1.Unmarshal(der, &privKey); err != nil {
 		return nil, errors.New("x509: failed to parse EC private key: " + err.Error())
@@ -172,7 +174,7 @@ func ParseCustomECPrivateKey(der []byte) (key *ecdsa.PrivateKey, err error) {
 	if k.Cmp(curveOrder) >= 0 {
 		return nil, errors.New("x509: invalid elliptic curve private key value")
 	}
-	priv := new(ecdsa.PrivateKey)
+	priv := new(PrivateKey)
 	priv.Curve = curve
 	priv.D = k
 

@@ -17,8 +17,8 @@ if err != nil {
 }
 
 for _, rate := range rates {
-    ccyA, _ := mono.CurrencyFromISO4217(rate.CodeA)
-    ccyB, _ := mono.CurrencyFromISO4217(rate.CodeB)
+    ccyA, _ := iso4217.CurrencyFromISO4217(rate.CodeA)
+    ccyB, _ := iso4217.CurrencyFromISO4217(rate.CodeB)
 
     if rate.RateBuy != 0 {
         fmt.Printf("%s/%s - %f\n", ccyA.Name, ccyB.Name, rate.RateBuy)
@@ -42,7 +42,7 @@ fmt.Printf("User: %s\n", user.Name)
 
 fmt.Println("Accounts:")
 for _, acc := range user.Accounts {
-    ccy, _ := mono.CurrencyFromISO4217(acc.CurrencyCode)
+    ccy, _ := iso4217.CurrencyFromISO4217(acc.CurrencyCode)
     balance := fmt.Sprintf("%d.%d", acc.Balance/100, acc.Balance%100)
     fmt.Printf("%s - %s %s\n", ccy.Name, balance, ccy.Symbol)
 }
@@ -64,7 +64,7 @@ to := time.Now()
 var account mono.Account
 
 for _, acc := range user.Accounts {
-    ccy, _ := mono.CurrencyFromISO4217(acc.CurrencyCode)
+    ccy, _ := iso4217.CurrencyFromISO4217(acc.CurrencyCode)
     if ccy.Code == "UAH" {
         account = acc
     }

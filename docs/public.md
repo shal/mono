@@ -16,8 +16,8 @@ if err != nil {
 }
 
 for _, rate := range rates {
-    ccyA, _ := mono.CurrencyFromISO4217(rate.CodeA)
-    ccyB, _ := mono.CurrencyFromISO4217(rate.CodeB)
+    ccyA, _ := iso4217.CurrencyFromISO4217(rate.CodeA)
+    ccyB, _ := iso4217.CurrencyFromISO4217(rate.CodeB)
 
     if rate.RateBuy != 0 {
         fmt.Printf("%s/%s - %f\n", ccyA.Name, ccyB.Name, rate.RateBuy)

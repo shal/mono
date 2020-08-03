@@ -6,7 +6,7 @@ jobs:
       - image: circleci/golang:1.13
         environment:
           GO111MODULE: "on"
-    working_directory: /go/src/github.com/shal/mono
+    working_directory: /go/src/shal.dev/mono
     steps:
       - checkout
       - run:
