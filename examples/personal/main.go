@@ -67,11 +67,10 @@ func main() {
 	days := make([]day, 35)
 
 	for _, t := range transactions {
-		res := time.Unix(int64(t.Time), 0)
 		if t.Amount < 0 {
-			days[res.Day()].Expense += float64(-t.Amount/100) + float64(-t.Amount%100)
+			days[t.Time.Day()].Expense += float64(-t.Amount/100) + float64(-t.Amount%100)
 		} else {
-			days[res.Day()].Revenue += float64(t.Amount/100) + float64(t.Amount%100)
+			days[t.Time.Day()].Revenue += float64(t.Amount/100) + float64(t.Amount%100)
 		}
 	}
 

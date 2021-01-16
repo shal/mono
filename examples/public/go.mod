@@ -1,5 +1,7 @@
 module github.com/shal/mono/examples/public
 
-go 1.14
+go 1.15
 
-require github.com/shal/mono v0.1.3 // indirect
+replace github.com/shal/mono => ../../
+
+require github.com/shal/mono v0.1.3
