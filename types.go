@@ -19,6 +19,7 @@ const (
 	Platinum AccountType = "platinum"
 	White    AccountType = "white"
 	Black    AccountType = "black"
+	FOP      AccountType = "fop"
 )
 
 // UserInfo is an overview of user and related accounts.
@@ -42,6 +43,8 @@ type Account struct {
 	CurrencyCode int32        `json:"currencyCode"` // Currency code in ISO4217.
 	CashBackType CashBackType `json:"cashbackType"` // Type of cash-back.
 	Type         AccountType  `json:"type"`         // Type of card.
+	IBAN         string       `json:"iban"`         // IBAN.
+	MaskedPan    []string     `json:"maskedPan"`
 }
 
 // Transaction is a banking transaction.
